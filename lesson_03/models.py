@@ -55,6 +55,3 @@ class Comment(Base):
     post_id = Column(Integer, ForeignKey('post.id'))
     posts = relationship('Post')
 
-
-
-#back_populates='comments'

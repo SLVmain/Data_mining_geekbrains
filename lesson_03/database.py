@@ -47,3 +47,7 @@ class Database:
             session.rollback()
         finally:
             session.close()
+
+        """session.commit()
+
+        session.close()"""
