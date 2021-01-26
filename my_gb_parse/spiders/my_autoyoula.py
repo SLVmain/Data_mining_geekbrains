@@ -6,7 +6,7 @@
 Список характеристик
 Описание объявления
 ссылка на автора объявления
-дополнительно попробуйте вытащить телефона"""
+дополнительно попробуйте вытащить номер телефона"""
 
 import scrapy
 
@@ -38,6 +38,10 @@ class MyAutoyoulaSpider(scrapy.Spider):
         yield from self.gen_tasks(response, response.css(self.css_query["ads"]), self.ads_parse)
 
     def ads_parse(self, response):
+        pattern = r'youlaId%22%2C%22([0-9|a-zA-Z]+)%22%2C%22avatar'
+        user_id = response.css('script::text').re_first(pattern)
+
+
         yield  {
             "title": response.css("div.AdvertCard_advertTitle__1S1Ak::text").get(),
             "price": response.css("div.AdvertCard_price__3dDCr::text").get(),
@@ -45,14 +49,15 @@ class MyAutoyoulaSpider(scrapy.Spider):
             "images": response.css("img.PhotoGallery_photoImage__2mHGn::attr(src)").getall(),
             "features_dict" : dict(zip(response.css("div.AdvertSpecs_label__2JHnS::text").getall(),
                                response.css("div.AdvertSpecs_data__xK2Qx *::text").getall())
-                                   )
+                                   ),
+            "user_url" : (f'https://youla.ru/user/{user_id}')
         }
 
         #print(data)
 
-# https://youla.ru/user/5a165fdcc15ae372b56c5294
+#https://youla.ru/user/5a165fdcc15ae372b56c5294
 
-#resposnse.follow(api/get-youla-profile)
+#api/get-youla-profile
 
 
 
