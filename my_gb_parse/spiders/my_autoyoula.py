@@ -9,6 +9,7 @@
 дополнительно попробуйте вытащить номер телефона"""
 
 import scrapy
+import base64
 
 
 class MyAutoyoulaSpider(scrapy.Spider):
@@ -41,6 +42,9 @@ class MyAutoyoulaSpider(scrapy.Spider):
         pattern = r'youlaId%22%2C%22([0-9|a-zA-Z]+)%22%2C%22avatar'
         user_id = response.css('script::text').re_first(pattern)
 
+        pattern1 = r'phone%22%2C%22(\w+)'
+        phone = response.css('script::text').re_first(pattern1)
+        phone = base64.b64decode(base64.b64decode(phone + '==')).decode("utf-8")
 
         yield  {
             "title": response.css("div.AdvertCard_advertTitle__1S1Ak::text").get(),
@@ -50,7 +54,8 @@ class MyAutoyoulaSpider(scrapy.Spider):
             "features_dict" : dict(zip(response.css("div.AdvertSpecs_label__2JHnS::text").getall(),
                                response.css("div.AdvertSpecs_data__xK2Qx *::text").getall())
                                    ),
-            "user_url" : (f'https://youla.ru/user/{user_id}')
+            "user_url" : (f'https://youla.ru/user/{user_id}'),
+            "phone" : phone
         }
 
         #print(data)
