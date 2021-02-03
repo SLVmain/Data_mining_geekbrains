@@ -19,6 +19,26 @@ class IGPostItem(scrapy.Item):
     node = scrapy.Field()
     images = scrapy.Field()
 
+class IGUserItem(scrapy.Item):
+    _id = scrapy.Field()
+    date_parse = scrapy.Field()
+    data = scrapy.Field()
+
+class IGFollowedByItem(scrapy.Item):
+    _id = scrapy.Field()
+    user_id = scrapy.Field()
+    user_name = scrapy.Field()
+    followed_by_id = scrapy.Field()
+    followed_by_name = scrapy.Field()
+
+class IGIFolloweItem(scrapy.Item):
+    _id = scrapy.Field()
+    user_id = scrapy.Field()
+    user_name = scrapy.Field()
+    i_follow_id = scrapy.Field()
+    i_follow_name = scrapy.Field()
+
+
 class MyGbParseItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()

@@ -24,7 +24,7 @@ class SaveToMongo:
         self.db[spider.name].insert_one(item)
         return item
 
-class GbImagePipeline(ImagesPipeline):
+"""class GbImagePipeline(ImagesPipeline): #рабочий вариант для загрузки картинок, убрала для второй домашки по инста 
     def get_media_requests(self, item, info):
 
         img_url = item.get('images', [])
@@ -32,15 +32,33 @@ class GbImagePipeline(ImagesPipeline):
 
     def item_completed(self, results, item, info):
         item['images'] = [itm[1] for itm in results]
-        return item
+        return item"""
 
-"""class GbImagePipeline(ImagesPipeline):
+"""class GbImagePipeline(ImagesPipeline): #загрузка картинок с работы на уроке
     def get_media_requests(self, item, info):
         for img_url in item.get('images', []):
             yield Request(img_url)
 
     def item_completed(self, results, item, info):
         item['images'] = [itm[1] for itm in results]
+        return item"""
+
+# вариант с урока
+"""class GbImagePipeline(ImagesPipeline):
+    def get_media_requests(self, item, info):
+        for img_url in item.get('images', []):
+        if isinstance(item, InstaPost):
+            pass
+        to_download = []
+        to_download.extend(item.get("images", []))
+        if item["data"].get("display_url"):
+            to_download.append(item["data"]["display_url"])
+        for img_url in to_download:
+            yield Request(img_url)
+
+    def item_completed(self, results, item, info):
+        item['images'] = [itm[1] for itm in results]
+        item["images"] = [itm[1] for itm in results]
         return item"""
 
 """class MyGbParsePipeline: #мой вариант домашки урок 04
@@ -53,18 +71,10 @@ class GbImagePipeline(ImagesPipeline):
         self.collection.insert(dict(item))
         return item"""
         
-        
-        
 """class GbparsImagesPipeline(ImagesPipeline):
 
     def get_media_requests(self, item, info):
-        images = item.get('img',
-                          item['data'].get('profile_pic_url',
-                                           item['data'].get('display_url',
-                                                            []
-                                                            )
-                                           )
-                          )
+        images = item.get('img',item['data'].get('profile_pic_url',item['data'].get('display_url',[])))
 
         if not isinstance(images, list):
             images = [images]
