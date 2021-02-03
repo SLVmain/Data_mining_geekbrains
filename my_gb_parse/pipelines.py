@@ -7,10 +7,8 @@
 # useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 import pymongo
-
-"""class MyGbParsePipeline:
-    def process_item(self, item, spider):
-        return item"""
+from scrapy import Request
+from scrapy.pipelines.images import ImagesPipeline
 
 class MyGbParsePipeline:
     def process_item(self, item, spider):
@@ -26,6 +24,24 @@ class SaveToMongo:
         self.db[spider.name].insert_one(item)
         return item
 
+class GbImagePipeline(ImagesPipeline):
+    def get_media_requests(self, item, info):
+
+        img_url = item.get('images', [])
+        yield Request(img_url)
+
+    def item_completed(self, results, item, info):
+        item['images'] = [itm[1] for itm in results]
+        return item
+
+"""class GbImagePipeline(ImagesPipeline):
+    def get_media_requests(self, item, info):
+        for img_url in item.get('images', []):
+            yield Request(img_url)
+
+    def item_completed(self, results, item, info):
+        item['images'] = [itm[1] for itm in results]
+        return item"""
 
 """class MyGbParsePipeline: #мой вариант домашки урок 04
     def __init__(self):
@@ -35,4 +51,32 @@ class SaveToMongo:
 
     def process_item(self, item, spider):
         self.collection.insert(dict(item))
+        return item"""
+        
+        
+        
+"""class GbparsImagesPipeline(ImagesPipeline):
+
+    def get_media_requests(self, item, info):
+        images = item.get('img',
+                          item['data'].get('profile_pic_url',
+                                           item['data'].get('display_url',
+                                                            []
+                                                            )
+                                           )
+                          )
+
+        if not isinstance(images, list):
+            images = [images]
+        for url in images:
+            try:
+                yield Request(url)
+            except Exception as e:
+                print(e)
+
+    def item_completed(self, results, item, info):
+        try:
+            item['img'] = [itm[1] for itm in results if itm[0]]
+        except KeyError:
+            pass
         return item"""
